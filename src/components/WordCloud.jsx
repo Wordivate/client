@@ -18,7 +18,6 @@ export default function WordCloud({ answers = [], width = 600, height = 400 }) {
   useEffect(() => {
     if (!svgRef.current) return;
 
-    // Hitung frekuensi tiap kata
     const freq = {};
     answers.forEach((word) => {
       freq[word] = (freq[word] || 0) + 1;
