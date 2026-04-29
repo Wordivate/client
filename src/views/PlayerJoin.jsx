@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useSocket } from "../context/SocketContext";
+import "../index.css";
 
 export default function PlayerJoin() {
   const socket = useSocket();
@@ -37,57 +38,39 @@ export default function PlayerJoin() {
     e.preventDefault();
     if (!roomCode || !nickname) return;
     setErrorMsg("");
+    sessionStorage.setItem("nickname", nickname);
     socket.emit("join_room", { roomCode: roomCode.toUpperCase(), nickname });
     setJoined(true);
   };
 
+  // --- STATE 1: MENUNGGU HOST ---
   if (joined && !errorMsg) {
     return (
-      <div className="min-h-screen bg-base-100 flex items-center justify-center p-4 relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-80 h-80 bg-secondary opacity-10 rounded-full blur-3xl -translate-x-1/3 -translate-y-1/3 pointer-events-none" />
-        <div className="z-10 w-full max-w-sm flex flex-col gap-5 text-center">
-          {/* Waiting state */}
-          <div className="flex flex-col items-center gap-4">
-            <div className="relative">
-              <span
-                className="loading loading-ring loading-lg text-secondary"
-                style={{ width: 72, height: 72 }}
-              />
-              <span className="absolute inset-0 flex items-center justify-center text-2xl">
-                🎮
-              </span>
+      <div className="join-container">
+        <div className="blob join-blob-top" />
+
+        <div className="join-wrapper text-center">
+          <div className="waiting-header">
+            <div className="waiting-icon-container">
+              <span className="spinner-ring" />
+              <span className="waiting-emoji">🎮</span>
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-base-content">
-                Menunggu Host...
-              </h2>
-              <p className="text-base-content/50 text-sm mt-1">
-                Game akan segera dimulai
-              </p>
+              <h2 className="waiting-title">Menunggu Host...</h2>
+              <p className="waiting-subtitle">Game akan segera dimulai</p>
             </div>
           </div>
 
-          <div className="card bg-base-200 border border-base-300 shadow-xl">
-            <div className="card-body gap-3">
-              <h3 className="text-sm uppercase tracking-widest text-base-content/50 font-semibold">
-                👥 Pemain di Room
-              </h3>
-              <div className="flex flex-col gap-2 max-h-60 overflow-y-auto">
+          <div className="join-card">
+            <div className="join-card-body">
+              <h3 className="player-list-title">👥 Pemain di Room</h3>
+              <div className="player-list">
                 {players.map((p, i) => (
-                  <div
-                    key={i}
-                    className="flex items-center gap-3 bg-base-300 rounded-xl px-3 py-2"
-                  >
-                    <span className="badge badge-secondary badge-sm font-mono">
-                      {i + 1}
-                    </span>
-                    <span className="font-medium text-base-content">
-                      {p.nickname}
-                    </span>
+                  <div key={i} className="player-item">
+                    <span className="badge-secondary">{i + 1}</span>
+                    <span className="player-name">{p.nickname}</span>
                     {p.nickname === nickname && (
-                      <span className="badge badge-accent badge-xs ml-auto">
-                        Kamu
-                      </span>
+                      <span className="badge-accent ml-auto">Kamu</span>
                     )}
                   </div>
                 ))}
@@ -99,30 +82,23 @@ export default function PlayerJoin() {
     );
   }
 
+  // --- STATE 2: FORM MASUK ROOM ---
   return (
-    <div className="min-h-screen bg-base-100 flex items-center justify-center p-4 relative overflow-hidden">
-      <div className="absolute bottom-0 right-0 w-80 h-80 bg-secondary opacity-10 rounded-full blur-3xl translate-x-1/3 translate-y-1/3 pointer-events-none" />
-      <div className="absolute top-0 left-0 w-64 h-64 bg-primary opacity-10 rounded-full blur-3xl -translate-x-1/3 -translate-y-1/3 pointer-events-none" />
+    <div className="join-container">
+      <div className="blob join-blob-bottom" />
+      <div className="blob join-blob-top-small" />
 
-      <div className="z-10 w-full max-w-sm flex flex-col gap-5">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold text-secondary text-glow-secondary">
-            Masuk Room
-          </h1>
-          <p className="text-base-content/50 text-sm mt-1">
-            Masukkan kode dari host
-          </p>
+      <div className="join-wrapper">
+        <div className="join-header">
+          <h1 className="title-glow-secondary">Masuk Room</h1>
+          <p className="subtitle-text">Masukkan kode dari host</p>
         </div>
 
-        <div className="card bg-base-200 border border-base-300 shadow-xl">
-          <div className="card-body gap-4">
-            <form onSubmit={handleJoin} className="flex flex-col gap-4">
-              <div className="form-control gap-1">
-                <label className="label py-0">
-                  <span className="label-text font-semibold text-base-content/70">
-                    Kode Room
-                  </span>
-                </label>
+        <div className="join-card">
+          <div className="join-card-body">
+            <form onSubmit={handleJoin} className="join-form">
+              <div className="form-group">
+                <label className="form-label">Kode Room</label>
                 <input
                   type="text"
                   value={roomCode}
@@ -130,16 +106,12 @@ export default function PlayerJoin() {
                   maxLength={6}
                   required
                   placeholder="ABC123"
-                  className="input input-bordered input-secondary w-full bg-base-300 mono text-center text-2xl font-bold tracking-widest uppercase"
+                  className="input-field input-code"
                 />
               </div>
 
-              <div className="form-control gap-1">
-                <label className="label py-0">
-                  <span className="label-text font-semibold text-base-content/70">
-                    Nickname
-                  </span>
-                </label>
+              <div className="form-group">
+                <label className="form-label">Nickname</label>
                 <input
                   type="text"
                   value={nickname}
@@ -147,12 +119,12 @@ export default function PlayerJoin() {
                   maxLength={16}
                   required
                   placeholder="Nama panggilan kamu"
-                  className="input input-bordered input-primary w-full bg-base-300"
+                  className="input-field"
                 />
               </div>
 
               {errorMsg && (
-                <div className="alert alert-error text-sm py-2">
+                <div className="alert-error">
                   <span>⚠️ {errorMsg}</span>
                 </div>
               )}
@@ -160,18 +132,15 @@ export default function PlayerJoin() {
               <button
                 type="submit"
                 disabled={!roomCode || !nickname}
-                className="btn btn-secondary btn-lg w-full gap-2 font-bold shadow-lg shadow-secondary/30 hover:-translate-y-1 transition-all duration-200"
+                className="btn-join"
               >
-                🚀 Masuk!
+                Masuk!
               </button>
             </form>
           </div>
         </div>
 
-        <button
-          onClick={() => navigate("/")}
-          className="btn btn-ghost btn-sm text-base-content/40 hover:text-base-content mx-auto"
-        >
+        <button onClick={() => navigate("/")} className="btn-back">
           ← Kembali ke Home
         </button>
       </div>

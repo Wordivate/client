@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useSocket } from "../context/SocketContext";
 import WordCloud from "../components/WordCloud";
+import "../index.css";
 
 export default function HostGame() {
   const socket = useSocket();
@@ -47,19 +48,17 @@ export default function HostGame() {
     : 0;
 
   return (
-    <div className="min-h-screen bg-base-100 flex flex-col items-center justify-center p-4 sm:p-6 relative overflow-hidden">
+    <div className="host-game-container">
       {/* Background blobs */}
-      <div className="absolute top-0 left-0 w-96 h-96 bg-primary opacity-10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
-      <div className="absolute bottom-0 right-0 w-96 h-96 bg-accent opacity-10 rounded-full blur-3xl translate-x-1/2 translate-y-1/2 pointer-events-none" />
+      <div className="blob hg-blob-primary" />
+      <div className="blob hg-blob-accent" />
 
-      <div className="z-10 w-full max-w-4xl flex flex-col gap-5">
+      <div className="hg-wrapper">
         {/* Header bar */}
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-primary text-glow">
-            🎮 Host Game
-          </h1>
+        <div className="hg-header">
+          <h1 className="title-glow-primary">🎮 Host Game</h1>
           {totalQuestions > 0 && (
-            <div className="badge badge-outline badge-primary text-sm font-mono px-3 py-3">
+            <div className="badge-outline">
               {currentQuestionIndex + 1} / {totalQuestions}
             </div>
           )}
@@ -67,51 +66,37 @@ export default function HostGame() {
 
         {/* Progress bar */}
         {totalQuestions > 0 && (
-          <div className="w-full">
-            <progress
-              className="progress progress-primary w-full h-3"
-              value={progress}
-              max="100"
-            />
+          <div className="progress-container">
+            <progress className="progress-bar" value={progress} max="100" />
           </div>
         )}
 
         {/* Question card */}
         {question ? (
-          <div className="card bg-base-200 border border-primary/30 shadow-2xl card-glow">
-            <div className="card-body items-center text-center py-10">
-              <p className="text-base-content/50 text-xs uppercase tracking-widest mb-3 font-semibold">
-                Soal {currentQuestionIndex + 1}
-              </p>
-              <p className="text-3xl sm:text-4xl font-bold text-base-content leading-snug max-w-2xl">
-                {question}
-              </p>
+          <div className="game-card question-card-active">
+            <div className="game-card-body">
+              <p className="question-label">Soal {currentQuestionIndex + 1}</p>
+              <p className="question-text">{question}</p>
             </div>
           </div>
         ) : (
-          <div className="card bg-base-200 border border-base-300 shadow-xl">
-            <div className="card-body items-center py-10">
-              <span className="loading loading-dots loading-lg text-primary" />
-              <p className="text-base-content/50 text-sm mt-2">
-                Menunggu soal...
-              </p>
+          <div className="game-card">
+            <div className="game-card-body">
+              <span className="loading-dots"></span>
+              <p className="waiting-text">Menunggu soal...</p>
             </div>
           </div>
         )}
 
         {/* Word cloud */}
-        <div className="card bg-base-200 border border-base-300 shadow-xl">
-          <div className="card-body">
-            <h2 className="card-title text-base-content/70 text-sm uppercase tracking-widest font-semibold">
-              ☁️ Jawaban Peserta
-            </h2>
-            <div className="flex items-center justify-center rounded-xl bg-base-300/50 overflow-hidden min-h-48">
+        <div className="game-card">
+          <div className="game-card-body-compact">
+            <h2 className="card-title-small">☁️ Jawaban Peserta</h2>
+            <div className="wordcloud-container">
               {answers.length > 0 ? (
                 <WordCloud answers={answers} width={560} height={260} />
               ) : (
-                <p className="text-base-content/30 text-sm py-10">
-                  Belum ada jawaban masuk...
-                </p>
+                <p className="waiting-text">Belum ada jawaban masuk...</p>
               )}
             </div>
           </div>
@@ -119,21 +104,19 @@ export default function HostGame() {
 
         {/* Grading state */}
         {loading && (
-          <div className="alert bg-warning/20 border border-warning/40 text-warning">
-            <span className="loading loading-spinner loading-sm" />
-            <span className="font-semibold">
-              Sedang mengoreksi jawaban dengan AI...
-            </span>
+          <div className="alert-warning">
+            <span className="spinner-small"></span>
+            <span>Sedang mengoreksi jawaban dengan AI...</span>
           </div>
         )}
 
         {/* Action buttons */}
-        <div className="flex gap-3 justify-center">
+        <div className="action-buttons">
           {!isLastQuestion && (
             <button
               onClick={() => socket?.emit("next_question")}
               disabled={loading}
-              className="btn btn-primary btn-lg gap-2 px-8 shadow-lg shadow-primary/30 hover:-translate-y-1 transition-all duration-200"
+              className="btn-game btn-game-primary"
             >
               Soal Berikutnya →
             </button>
@@ -142,7 +125,7 @@ export default function HostGame() {
             <button
               onClick={() => socket?.emit("end_game")}
               disabled={loading}
-              className="btn btn-success btn-lg gap-2 px-8 shadow-lg shadow-success/30 hover:-translate-y-1 transition-all duration-200"
+              className="btn-game btn-game-success"
             >
               🏆 Selesai & Lihat Hasil
             </button>
