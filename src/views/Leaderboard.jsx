@@ -35,7 +35,6 @@ export default function Leaderboard() {
     );
   }
 
-  // Cari data player ini. Gunakan .toLowerCase() untuk jaga-jaga mismatch casing
   const myData = isPlayer
     ? rankings.find(
         (p) => p.nickname?.toLowerCase() === myNickname?.toLowerCase(),
@@ -43,7 +42,7 @@ export default function Leaderboard() {
     : null;
 
   const top3 = rankings.slice(0, 3);
-  const rest = rankings.slice(3); // Pemain peringkat 4 ke bawah
+  const rest = rankings.slice(3); 
   const podium = [top3[1], top3[0], top3[2]].filter(Boolean);
   const gameQuestions = rankings[0]?.answers || [];
 

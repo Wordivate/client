@@ -158,7 +158,6 @@ h3,
   font-size: 4.5rem;
   font-weight: 700;
   letter-spacing: -0.025em;
-  /* Text shadow/glow dihapus sesuai permintaan */
 }
 
 .title-primary {
@@ -231,7 +230,6 @@ h3,
   text-align: center;
 }
 
-/* Class dipertahankan agar JSX tidak error, tapi efek GLOW dihapus */
 .title-glow {
   font-size: 2.25rem;
   color: var(--primary);
