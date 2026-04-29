@@ -14,8 +14,8 @@ export default function Leaderboard() {
   useEffect(() => {
     if (!socket) return;
 
-    const handleShowLeaderboard = ({ rankings }) => {
-      if (rankings?.length) setRankings(rankings);
+    const handleShowLeaderboard = ({ rankings: incomingRankings }) => {
+      if (incomingRankings?.length) setRankings(incomingRankings);
     };
 
     socket.on("show_leaderboard", handleShowLeaderboard);
@@ -35,13 +35,16 @@ export default function Leaderboard() {
     );
   }
 
+  // Cari data player ini. Gunakan .toLowerCase() untuk jaga-jaga mismatch casing
   const myData = isPlayer
-    ? rankings.find((p) => p.nickname === myNickname)
+    ? rankings.find(
+        (p) => p.nickname?.toLowerCase() === myNickname?.toLowerCase(),
+      )
     : null;
 
   const top3 = rankings.slice(0, 3);
+  const rest = rankings.slice(3); // Pemain peringkat 4 ke bawah
   const podium = [top3[1], top3[0], top3[2]].filter(Boolean);
-
   const gameQuestions = rankings[0]?.answers || [];
 
   return (
@@ -63,97 +66,95 @@ export default function Leaderboard() {
         </p>
       </div>
 
-      {/* --- TAMPILAN KHUSUS PLAYER (ANNOUNCEMENT) --- */}
-      {isPlayer && myData && (
-        <div className="player-rank-announcement">
-          <div className="rank-circle">
-            <span className="rank-label">Peringkat</span>
-            <span className="rank-number">#{myData.rank}</span>
-          </div>
-          <div className="player-summary-stats">
-            <div className="summary-item">
-              <span className="summary-val">{myData.score}</span>
-              <span className="summary-lab">Poin</span>
-            </div>
-            <div className="summary-item">
-              <span className="summary-val">
-                {myData.total
-                  ? Math.round((myData.score / myData.total) * 100)
-                  : 0}
-                %
-              </span>
-              <span className="summary-lab">Akurasi</span>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* --- TAMPILAN KHUSUS HOST (PODIUM) --- */}
-      {!isPlayer && top3.length > 0 && (
-        <div className="podium-wrapper">
-          {podium.map((player) => (
-            <PodiumSlot key={player.nickname} player={player} />
-          ))}
-        </div>
-      )}
-
-      {/* --- DAFTAR PERTANYAAN & JAWABAN --- */}
-      <div className="lb-detail-section">
-        <h2 className="section-title">
-          {isPlayer
-            ? "Detail Jawaban Kamu"
-            : "Daftar Pertanyaan & Kunci Jawaban"}
-        </h2>
-
-        {isPlayer && myData ? (
-          <div className="lb-questions-list">
-            {myData.answers.map((item, idx) => (
-              <div key={idx} className="lb-q-card">
-                <div className="lb-q-header">
-                  <span className="lb-q-number">Soal {idx + 1}</span>
-                  <span
-                    className={`badge-indicator ${item.correct ? "indicator-success" : "indicator-error"}`}
-                  >
-                    {item.correct ? "✓ Benar" : "✗ Salah"}
-                  </span>
+      {/* --- KONTEN UTAMA --- */}
+      {isPlayer ? (
+        /* VIEW UNTUK PLAYER */
+        myData ? (
+          <>
+            <div className="player-rank-announcement">
+              <div className="rank-circle">
+                <span className="rank-label">Peringkat</span>
+                <span className="rank-number">#{myData.rank}</span>
+              </div>
+              <div className="player-summary-stats">
+                <div className="summary-item">
+                  <span className="summary-val">{myData.score}</span>
+                  <span className="summary-lab">Poin</span>
                 </div>
-                <p className="lb-q-text">
-                  {item.questionText || `Pertanyaan ${idx + 1} tidak tersedia`}
-                </p>
-                <div className="lb-q-answer-box">
-                  <span className="lb-q-label">Jawabanmu:</span>
-                  <span
-                    className={`lb-q-value ${item.correct ? "text-success" : "text-error"}`}
-                  >
-                    {item.answer || "Tidak dijawab"}
+                <div className="summary-item">
+                  <span className="summary-val">
+                    {myData.total
+                      ? Math.round((myData.score / myData.total) * 100)
+                      : 0}
+                    %
                   </span>
+                  <span className="summary-lab">Akurasi</span>
                 </div>
               </div>
-            ))}
-          </div>
+            </div>
+
+            <div className="lb-detail-section">
+              <h2 className="section-title">Detail Jawaban Kamu</h2>
+              <div className="lb-questions-list">
+                {myData.answers.map((item, idx) => (
+                  <QuestionCard
+                    key={idx}
+                    item={item}
+                    idx={idx}
+                    isPlayerView={true}
+                  />
+                ))}
+              </div>
+            </div>
+          </>
         ) : (
-          <div className="lb-questions-list">
-            {gameQuestions.map((item, idx) => (
-              <div key={idx} className="lb-q-card">
-                <div className="lb-q-header">
-                  <span className="lb-q-number">Soal {idx + 1}</span>
-                </div>
-                <p className="lb-q-text">
-                  {item.questionText || `Pertanyaan ${idx + 1} tidak tersedia`}
-                </p>
-                <div className="lb-q-answer-box">
-                  <span className="lb-q-label">Kunci Jawaban:</span>
-                  <span className="lb-q-value text-success">
-                    {item.baseAnswer || "—"}
-                  </span>
-                </div>
-              </div>
-            ))}
+          <div className="lb-centered">
+            <p>Data kamu tidak ditemukan di leaderboard.</p>
           </div>
-        )}
-      </div>
+        )
+      ) : (
+        /* VIEW UNTUK HOST */
+        <>
+          {top3.length > 0 && (
+            <div className="podium-wrapper">
+              {podium.map((player) => (
+                <PodiumSlot key={player.nickname} player={player} />
+              ))}
+            </div>
+          )}
 
-      {/* --- TOMBOL MAIN LAGI --- */}
+          {/* Sisa Peringkat (Rank 4 ke atas) untuk Host */}
+          {rest.length > 0 && (
+            <div className="lb-rest-rankings">
+              <h2 className="section-title">Peringkat Lainnya</h2>
+              <div className="rest-list">
+                {rest.map((player) => (
+                  <div key={player.nickname} className="rest-item">
+                    <span className="rest-rank">#{player.rank}</span>
+                    <span className="rest-name">{player.nickname}</span>
+                    <span className="rest-score">{player.score} pt</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="lb-detail-section">
+            <h2 className="section-title">Daftar Pertanyaan & Kunci Jawaban</h2>
+            <div className="lb-questions-list">
+              {gameQuestions.map((item, idx) => (
+                <QuestionCard
+                  key={idx}
+                  item={item}
+                  idx={idx}
+                  isPlayerView={false}
+                />
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+
       <button
         onClick={() => {
           sessionStorage.removeItem("nickname");
@@ -167,17 +168,46 @@ export default function Leaderboard() {
   );
 }
 
-function PodiumSlot({ player }) {
-  if (!player) return <div className="podium-empty" />;
+// Komponen Kecil untuk Kartu Pertanyaan
+function QuestionCard({ item, idx, isPlayerView }) {
+  return (
+    <div className="lb-q-card">
+      <div className="lb-q-header">
+        <span className="lb-q-number">Soal {idx + 1}</span>
+        {isPlayerView && (
+          <span
+            className={`badge-indicator ${item.correct ? "indicator-success" : "indicator-error"}`}
+          >
+            {item.correct ? "✓ Benar" : "✗ Salah"}
+          </span>
+        )}
+      </div>
+      <p className="lb-q-text">
+        {item.questionText || `Pertanyaan ${idx + 1}`}
+      </p>
+      <div className="lb-q-answer-box">
+        <span className="lb-q-label">
+          {isPlayerView ? "Jawabanmu:" : "Kunci Jawaban:"}
+        </span>
+        <span
+          className={`lb-q-value ${isPlayerView && !item.correct ? "text-error" : "text-success"}`}
+        >
+          {isPlayerView
+            ? item.answer || "Tidak dijawab"
+            : item.baseAnswer || "—"}
+        </span>
+      </div>
+    </div>
+  );
+}
 
+function PodiumSlot({ player }) {
   const configs = {
     1: { badge: "🥇", rankClass: "podium-1", order: "order-2" },
     2: { badge: "🥈", rankClass: "podium-2", order: "order-1" },
     3: { badge: "🥉", rankClass: "podium-3", order: "order-3" },
   };
-
   const c = configs[player.rank] || configs[3];
-
   return (
     <div className={`podium-slot ${c.order}`}>
       <span className="podium-badge">{c.badge}</span>

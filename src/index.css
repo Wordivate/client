@@ -792,6 +792,8 @@ h3,
   border-radius: 0.75rem;
   min-height: 12rem;
   overflow: hidden;
+  padding: 0;
+  width: 100%;
 }
 
 .waiting-text {
@@ -1173,6 +1175,44 @@ h3,
   font-size: 0.875rem;
 }
 
+.lb-rest-rankings {
+  width: 100%;
+  max-width: 48rem;
+  z-index: 10;
+  margin-top: 1rem;
+}
+
+.rest-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.rest-item {
+  display: flex;
+  align-items: center;
+  background-color: var(--base-200);
+  border: 1px solid var(--base-300);
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.75rem;
+}
+
+.rest-rank {
+  font-family: "AGFatumCBold", sans-serif;
+  color: var(--primary);
+  width: 3rem;
+}
+
+.rest-name {
+  flex: 1;
+  font-weight: 700;
+  color: var(--base-content);
+}
+
+.rest-score {
+  font-family: monospace;
+  opacity: 0.6;
+}
 /* --- PODIUM --- */
 .podium-wrapper {
   z-index: 10;
