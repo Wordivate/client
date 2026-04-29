@@ -42,6 +42,8 @@ export default function HostGame() {
     socket.on("grading_start", handleGradingStart);
     socket.on("show_leaderboard", handleShowLeaderboard);
 
+    socket.emit("get_current_question");
+
     return () => {
       socket.off("new_question", handleNewQuestion);
       socket.off("wordcloud_update", handleWordcloudUpdate);
