@@ -1,8 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { socket } from "../socket";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
+import { useSocket } from "../context/SocketContext";
 import WordCloud from "../components/WordCloud";
 
 export default function HostGame() {
+  const socket = useSocket();
+  const navigate = useNavigate();
+
   const [question, setQuestion] = useState("");
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [totalQuestions, setTotalQuestions] = useState(0);
@@ -11,33 +15,48 @@ export default function HostGame() {
   const [isLastQuestion, setIsLastQuestion] = useState(false);
 
   useEffect(() => {
-    socket.on("new_question", ({ index, text, total }) => {
+    if (!socket) return;
+
+    const handleNewQuestion = ({ index, text, total }) => {
       setCurrentQuestionIndex(index);
       setQuestion(text);
       setTotalQuestions(total);
+      setAnswers([]);
       setIsLastQuestion(index === total - 1);
-    });
+    };
 
-    socket.on("wordcloud_update", (newAnswers) => {
-      setAnswers(newAnswers);
-    });
+    const handleWordcloudUpdate = ({ answers }) => {
+      setAnswers(answers);
+    };
 
-    socket.on("grading_start", () => {
+    const handleGradingStart = () => {
       setLoading(true);
-    });
+    };
+
+    const handleShowLeaderboard = () => {
+      navigate("/leaderboard");
+    };
+
+    socket.on("new_question", handleNewQuestion);
+    socket.on("wordcloud_update", handleWordcloudUpdate);
+    socket.on("grading_start", handleGradingStart);
+    socket.on("show_leaderboard", handleShowLeaderboard);
 
     return () => {
-      socket.off("new_question");
-      socket.off("wordcloud_update");
-      socket.off("grading_start");
+      socket.off("new_question", handleNewQuestion);
+      socket.off("wordcloud_update", handleWordcloudUpdate);
+      socket.off("grading_start", handleGradingStart);
+      socket.off("show_leaderboard", handleShowLeaderboard);
     };
-  }, []);
+  }, [socket, navigate]);
 
   const handleNextQuestion = () => {
+    if (!socket) return;
     socket.emit("next_question");
   };
 
   const handleEndGame = () => {
+    if (!socket) return;
     socket.emit("end_game");
   };
 

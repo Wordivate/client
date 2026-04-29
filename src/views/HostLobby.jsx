@@ -1,52 +1,74 @@
-import React, { useState, useEffect } from "react";
-import { socket } from "../socket";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router";
+import { useSocket } from "../context/SocketContext";
 
 export default function HostLobby() {
+  const socket = useSocket();
+  const navigate = useNavigate();
+
   const [roomCode, setRoomCode] = useState("");
   const [nickname, setNickname] = useState("");
   const [players, setPlayers] = useState([]);
   const [topic, setTopic] = useState("");
   const [loading, setLoading] = useState(false);
   const [questionsReady, setQuestionsReady] = useState(false);
+  const [questionCount, setQuestionCount] = useState(0);
   const [geminiError, setGeminiError] = useState("");
 
   useEffect(() => {
-    socket.on("room_created", (code) => {
-      setRoomCode(code);
-    });
+    if (!socket) return;
 
-    socket.on("player_joined", (player) => {
-      setPlayers((prevPlayers) => [...prevPlayers, player]);
-    });
+    const handleRoomCreated = ({ roomCode }) => {
+      setRoomCode(roomCode);
+    };
 
-    socket.on("questions_ready", (count) => {
-      setQuestionsReady(count);
+    const handlePlayerJoined = ({ players }) => {
+      setPlayers(players);
+    };
+
+    const handleQuestionsReady = ({ count }) => {
+      setQuestionsReady(true);
+      setQuestionCount(count);
       setLoading(false);
-      setTopic(""); // Clear topic input after successful generation
-    });
+      setTopic("");
+    };
 
-    socket.on("gemini_error", (error) => {
-      setGeminiError(error);
+    const handleGeminiError = ({ message }) => {
+      setGeminiError(message);
       setLoading(false);
-    });
+    };
+
+    const handleGameStarted = () => {
+      navigate("/host/game");
+    };
+
+    socket.on("room_created", handleRoomCreated);
+    socket.on("player_joined", handlePlayerJoined);
+    socket.on("questions_ready", handleQuestionsReady);
+    socket.on("gemini_error", handleGeminiError);
+    socket.on("game_started", handleGameStarted);
 
     return () => {
-      socket.off("room_created");
-      socket.off("player_joined");
-      socket.off("questions_ready");
-      socket.off("gemini_error");
+      socket.off("room_created", handleRoomCreated);
+      socket.off("player_joined", handlePlayerJoined);
+      socket.off("questions_ready", handleQuestionsReady);
+      socket.off("gemini_error", handleGeminiError);
+      socket.off("game_started", handleGameStarted);
     };
-  }, []);
+  }, [socket, navigate]);
 
   const handleCreateRoom = () => {
+    if (!socket) return;
     socket.emit("create_room");
   };
 
   const handleJoinRoom = () => {
-    if (nickname) socket.emit("join_room", { nickname });
+    if (!socket || !nickname || !roomCode) return;
+    socket.emit("join_room", { roomCode, nickname });
   };
 
   const handleGenerateQuestions = () => {
+    if (!socket) return;
     if (!topic.trim()) {
       setGeminiError("Silakan masukkan topik quiz terlebih dahulu");
       return;
@@ -57,6 +79,7 @@ export default function HostLobby() {
   };
 
   const handleStartGame = () => {
+    if (!socket) return;
     socket.emit("start_game");
   };
 
@@ -101,7 +124,8 @@ export default function HostLobby() {
           />
           <button
             onClick={handleJoinRoom}
-            className="w-full bg-green-500 hover:bg-green-600 text-white font-bold px-4 py-2 rounded-lg transition"
+            disabled={!roomCode || !nickname}
+            className="w-full bg-green-500 hover:bg-green-600 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-bold px-4 py-2 rounded-lg transition"
           >
             Bergabung ke Room
           </button>
@@ -141,7 +165,7 @@ export default function HostLobby() {
         {questionsReady && (
           <div className="mb-6 border-t pt-6 bg-green-50 p-4 rounded-lg">
             <p className="text-gray-700 font-semibold text-center mb-4">
-              ✓ Soal Siap! ({questionsReady} pertanyaan)
+              ✓ Soal Siap! ({questionCount} pertanyaan)
             </p>
             <button
               onClick={handleStartGame}
@@ -172,7 +196,7 @@ export default function HostLobby() {
                     <span className="inline-block w-6 h-6 bg-blue-500 text-white rounded-full text-center text-xs font-bold mr-3">
                       {index + 1}
                     </span>
-                    {player}
+                    {player.nickname}
                   </li>
                 ))}
               </ul>
