@@ -969,6 +969,7 @@ h3,
   width: 3.5rem;
   height: 3.5rem;
   border-top-color: var(--primary);
+  position: relative;
 }
 .mt-4 {
   margin-top: 1rem;
