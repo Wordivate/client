@@ -164,7 +164,7 @@ export default function HostLobby() {
         {questionsReady && (
           <button
             onClick={handleStartGame}
-            className="btn btn-warning btn-lg w-full gap-2 text-base-100 font-bold shadow-lg shadow-warning/30 hover:-translate-y-1 transition-all duration-200"
+            className="btn btn-warning btn-lg w-full gap-2 font-bold shadow-lg shadow-warning/30 hover:-translate-y-1 transition-all duration-200"
           >
             🎮 Mulai Game!
           </button>
