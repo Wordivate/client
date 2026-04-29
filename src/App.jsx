@@ -11,7 +11,6 @@ import Leaderboard from "./views/Leaderboard";
 
 function ThemeToggle() {
   const { theme, toggleTheme } = useContext(ThemeContext);
-  // Perbaiki pengecekan tema gelap dari "abyss" menjadi "dim"
   const isDark = theme === "dim";
 
   return (
