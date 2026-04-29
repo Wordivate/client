@@ -94,7 +94,7 @@ export default function HostGame() {
             <h2 className="card-title-small">☁️ Jawaban Peserta</h2>
             <div className="wordcloud-container">
               {answers.length > 0 ? (
-                <WordCloud answers={answers} width={560} height={260} />
+                <WordCloud answers={answers} height={300} />
               ) : (
                 <p className="waiting-text">Belum ada jawaban masuk...</p>
               )}

@@ -791,7 +791,9 @@ h3,
   background-color: rgba(0, 0, 0, 0.05);
   border-radius: 0.75rem;
   min-height: 12rem;
-  overflow: hidden;
+  overflow: hidden; 
+  padding: 0;
+  width: 100%;
 }
 
 .waiting-text {
