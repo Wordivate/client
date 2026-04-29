@@ -1,15 +1,9 @@
+import "./Leaderboard.css";
+
 const rankConfig = {
-  1: { emoji: "🥇", label: "Gold", cls: "border-warning/50 bg-warning/10" },
-  2: {
-    emoji: "🥈",
-    label: "Silver",
-    cls: "border-base-content/20 bg-base-300/30",
-  },
-  3: {
-    emoji: "🥉",
-    label: "Bronze",
-    cls: "border-orange-500/30 bg-orange-900/10",
-  },
+  1: { emoji: "🥇", label: "Gold", cls: "card-gold" },
+  2: { emoji: "🥈", label: "Silver", cls: "card-silver" },
+  3: { emoji: "🥉", label: "Bronze", cls: "card-bronze" },
 };
 
 export default function LeaderboardCard({
@@ -24,58 +18,42 @@ export default function LeaderboardCard({
   const correct = answers.filter((a) => a.correct).length;
 
   return (
-    <div
-      className={`card bg-base-200 border ${cfg ? cfg.cls : "border-base-300"} shadow-lg hover:shadow-xl transition-shadow duration-200`}
-    >
-      <div className="card-body gap-3 p-4">
+    <div className={`lb-card ${cfg ? cfg.cls : "card-default"}`}>
+      <div className="lb-card-body">
         {/* Header row */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            {cfg && <span className="text-xl">{cfg.emoji}</span>}
-            <span className="badge badge-outline badge-primary font-mono text-xs">
-              #{rank}
-            </span>
+        <div className="lb-card-header">
+          <div className="lb-rank-info">
+            {cfg && <span className="lb-emoji-small">{cfg.emoji}</span>}
+            <span className="badge-outline-small">#{rank}</span>
           </div>
-          <div className="text-right">
-            <span className="text-2xl font-black text-primary">{score}</span>
-            <span className="text-base-content/40 text-xs ml-1">/ {total}</span>
+          <div className="lb-score-info">
+            <span className="lb-score-text">{score}</span>
+            <span className="lb-total-text">/ {total}</span>
           </div>
         </div>
 
         {/* Name */}
-        <p className="font-bold text-base-content text-lg leading-tight truncate">
-          {nickname}
-        </p>
+        <p className="lb-nickname">{nickname}</p>
 
         {/* Stats */}
-        <div className="flex gap-3">
-          <div className="stat-badge">
-            <span className="text-success text-xs font-bold">
-              {correct} Benar
-            </span>
-          </div>
-          <div className="stat-badge">
-            <span className="text-base-content/50 text-xs font-bold">
-              {accuracy}%
-            </span>
-          </div>
+        <div className="lb-stats-row">
+          <div className="stat-badge text-success">{correct} Benar</div>
+          <div className="stat-badge text-muted">{accuracy}%</div>
         </div>
 
         {/* Answer list */}
         {answers.length > 0 && (
-          <div className="flex flex-col gap-1 mt-1">
+          <div className="lb-answers-list">
             {answers.map((item) => (
               <div
                 key={`${nickname}-${item.questionIndex}`}
-                className="flex items-center justify-between bg-base-300/60 rounded-lg px-2.5 py-1.5 text-xs"
+                className="lb-answer-item"
               >
-                <span className="text-base-content/70 font-medium truncate flex-1 mr-2">
+                <span className="lb-answer-text">
                   Q{item.questionIndex + 1}: {item.answer || "—"}
                 </span>
                 <span
-                  className={`badge badge-xs font-bold ${
-                    item.correct ? "badge-success" : "badge-error"
-                  }`}
+                  className={`badge-indicator ${item.correct ? "indicator-success" : "indicator-error"}`}
                 >
                   {item.correct ? "✓" : "✗"}
                 </span>

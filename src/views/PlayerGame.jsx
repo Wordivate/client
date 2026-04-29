@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useSocket } from "../context/SocketContext";
+import "./PlayerGame.css";
 
 export default function PlayerGame() {
   const socket = useSocket();
@@ -46,18 +47,14 @@ export default function PlayerGame() {
     setSubmitted(true);
   };
 
+  // --- STATE 1: MENGHITUNG HASIL ---
   if (grading) {
     return (
-      <div className="min-h-screen bg-base-100 flex items-center justify-center">
-        <div className="flex flex-col items-center gap-5 text-center px-6">
-          <span
-            className="loading loading-dots loading-lg text-warning"
-            style={{ width: 60 }}
-          />
-          <h2 className="text-2xl font-bold text-base-content">
-            Menghitung hasil...
-          </h2>
-          <p className="text-base-content/50 text-sm">
+      <div className="pg-full-screen">
+        <div className="pg-centered-content">
+          <span className="loading-dots pg-loading-warning"></span>
+          <h2 className="pg-title">Menghitung hasil...</h2>
+          <p className="pg-subtitle">
             AI sedang mengoreksi jawaban semua peserta
           </p>
         </div>
@@ -65,66 +62,51 @@ export default function PlayerGame() {
     );
   }
 
+  // --- STATE 2: MENUNGGU SOAL ---
   if (!question) {
     return (
-      <div className="min-h-screen bg-base-100 flex items-center justify-center">
-        <div className="flex flex-col items-center gap-5 text-center px-6">
-          <span
-            className="loading loading-ring text-primary"
-            style={{ width: 60 }}
-          />
-          <h2 className="text-2xl font-bold text-base-content">
-            Menunggu soal...
-          </h2>
-          <p className="text-base-content/50 text-sm">
-            Host sedang mempersiapkan game
-          </p>
+      <div className="pg-full-screen">
+        <div className="pg-centered-content">
+          <div className="spinner-ring pg-spinner-primary"></div>
+          <h2 className="pg-title mt-4">Menunggu soal...</h2>
+          <p className="pg-subtitle">Host sedang mempersiapkan game</p>
         </div>
       </div>
     );
   }
 
+  // --- STATE 3: MENJAWAB SOAL ---
   const progress = Math.round(((question.index + 1) / question.total) * 100);
 
   return (
-    <div className="min-h-screen bg-base-100 flex items-center justify-center p-4 relative overflow-hidden">
-      <div className="absolute top-0 left-0 w-80 h-80 bg-primary opacity-10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
-      <div className="absolute bottom-0 right-0 w-72 h-72 bg-secondary opacity-10 rounded-full blur-3xl translate-x-1/3 translate-y-1/3 pointer-events-none" />
+    <div className="pg-container">
+      <div className="blob pg-blob-top" />
+      <div className="blob pg-blob-bottom" />
 
-      <div className="z-10 w-full max-w-sm flex flex-col gap-5">
+      <div className="pg-wrapper">
         {/* Progress & counter */}
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center justify-between">
-            <span className="text-base-content/50 text-xs uppercase tracking-widest font-semibold">
-              Soal
-            </span>
-            <span className="badge badge-outline badge-primary font-mono">
+        <div className="pg-progress-header">
+          <div className="pg-progress-text">
+            <span className="pg-label">Soal</span>
+            <span className="badge-outline">
               {question.index + 1} / {question.total}
             </span>
           </div>
-          <progress
-            className="progress progress-primary w-full h-2"
-            value={progress}
-            max="100"
-          />
+          <progress className="progress-bar" value={progress} max="100" />
         </div>
 
         {/* Question card */}
-        <div className="card bg-base-200 border border-primary/30 shadow-2xl card-glow min-h-40">
-          <div className="card-body items-center justify-center text-center py-8">
-            <p className="text-2xl sm:text-3xl font-bold text-base-content leading-snug">
-              {question.text}
-            </p>
+        <div className="game-card question-card-active pg-min-h">
+          <div className="game-card-body">
+            <p className="pg-question-text">{question.text}</p>
           </div>
         </div>
 
         {/* Answer form */}
-        <div className="card bg-base-200 border border-base-300 shadow-xl">
-          <div className="card-body gap-4">
-            <p className="text-base-content/50 text-xs text-center uppercase tracking-wider">
-              Ketik 1 kata jawaban
-            </p>
-            <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+        <div className="game-card">
+          <div className="pg-form-body">
+            <p className="pg-hint">Ketik 1 kata jawaban</p>
+            <form onSubmit={handleSubmit} className="pg-form">
               <input
                 type="text"
                 value={answer}
@@ -132,28 +114,22 @@ export default function PlayerGame() {
                 disabled={submitted}
                 required
                 placeholder="Jawaban kamu..."
-                className="input input-bordered input-primary w-full bg-base-300 text-center text-xl font-bold tracking-wide"
+                className="pg-input"
                 autoFocus
               />
               <button
                 type="submit"
                 disabled={submitted || !answer.trim()}
-                className={`btn btn-lg w-full gap-2 font-bold transition-all duration-200 ${
-                  submitted
-                    ? "btn-success cursor-not-allowed"
-                    : "btn-primary hover:-translate-y-1 shadow-lg shadow-primary/30"
-                }`}
+                className={`btn-game pg-btn-submit ${submitted ? "pg-btn-success" : "pg-btn-primary"}`}
               >
-                {submitted ? <>✓ Jawaban Terkirim!</> : <>🚀 Kirim Jawaban</>}
+                {submitted ? "✓ Jawaban Terkirim!" : "🚀 Kirim Jawaban"}
               </button>
             </form>
           </div>
         </div>
 
         {submitted && (
-          <div className="text-center text-base-content/40 text-sm animate-pulse">
-            Menunggu soal berikutnya...
-          </div>
+          <div className="pg-waiting-pulse">Menunggu soal berikutnya...</div>
         )}
       </div>
     </div>

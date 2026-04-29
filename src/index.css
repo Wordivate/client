@@ -1,34 +1,151 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* client/src/index.css */
 
-@layer base {
-  html,
-  body,
-  #root {
-    min-height: 100vh;
-  }
+/* === TEMA LIGHT (Default) === */
+:root,
+[data-theme="autumn"] {
+  --base-100: #ffffff;
+  --base-200: #f3f4f6;
+  --base-300: #e5e7eb;
+  --base-content: #1f2937;
 
-  body {
-    font-family: ui-sans-serif, system-ui, sans-serif;
-    -webkit-font-smoothing: antialiased;
-  }
+  --primary: #8c0327; /* Sesuaikan dengan warna autumn daisyui */
+  --primary-content: #ffffff;
+
+  --secondary: #d85251;
+  --secondary-content: #ffffff;
+
+  --accent: #d59b6a;
+
+  --shadow-color: rgba(0, 0, 0, 0.1);
 }
 
-@layer utilities {
-  .text-glow {
-    text-shadow:
-      0 0 20px oklch(var(--p) / 0.6),
-      0 0 60px oklch(var(--p) / 0.3);
-  }
-  .text-glow-secondary {
-    text-shadow:
-      0 0 20px oklch(var(--s) / 0.6),
-      0 0 60px oklch(var(--s) / 0.3);
-  }
-  .card-glow {
-    box-shadow:
-      0 0 0 1px oklch(var(--p) / 0.2),
-      0 8px 32px oklch(var(--p) / 0.15);
-  }
+/* === TEMA DARK (Dim) === */
+[data-theme="dim"] {
+  --base-100: #2a303c;
+  --base-200: #242933;
+  --base-300: #20252e;
+  --base-content: #a6adbb;
+
+  --primary: #9efa5c;
+  --primary-content: #1f2937;
+
+  --secondary: #ff77dc;
+  --secondary-content: #1f2937;
+
+  --accent: #ffb86b;
+
+  --shadow-color: rgba(0, 0, 0, 0.5);
+}
+
+/* === RESET & GLOBAL STYLES === */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  min-height: 100vh;
+}
+
+body {
+  font-family: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  background-color: var(--base-100);
+  color: var(--base-content);
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* === UTILITY CLASSES === */
+.min-h-screen {
+  min-height: 100vh;
+}
+.flex {
+  display: flex;
+}
+.flex-col {
+  flex-direction: column;
+}
+.items-center {
+  align-items: center;
+}
+.justify-center {
+  justify-content: center;
+}
+.gap-2 {
+  gap: 0.5rem;
+}
+.gap-3 {
+  gap: 0.75rem;
+}
+.gap-4 {
+  gap: 1rem;
+}
+
+/* Tombol Dasar (Menggantikan .btn dari DaisyUI) */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--shadow-color);
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  color: var(--primary-content);
+}
+
+.btn-secondary {
+  background-color: var(--secondary);
+  color: var(--secondary-content);
+}
+
+.btn-ghost {
+  background-color: transparent;
+  color: inherit;
+}
+
+.btn-ghost:hover {
+  background-color: var(--base-200);
+  box-shadow: none;
+}
+
+/* Mengganti class text-glow */
+.text-glow {
+  text-shadow:
+    0 0 20px var(--primary),
+    0 0 60px var(--primary);
+}
+
+.theme-toggle-btn {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 50;
+  background: transparent;
+  border: none;
+  color: var(--base-content);
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+.theme-toggle-btn:hover {
+  background-color: var(--base-200);
 }

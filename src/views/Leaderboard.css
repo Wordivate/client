@@ -1,0 +1,348 @@
+/* Container Utama */
+.lb-full-screen,
+.lb-container {
+  min-height: 100vh;
+  background-color: var(--base-100);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+.lb-full-screen {
+  align-items: center;
+  justify-content: center;
+}
+.lb-container {
+  align-items: center;
+  gap: 2rem;
+  padding: 2.5rem 1rem;
+}
+
+/* Loading state */
+.lb-centered {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+}
+.lb-spinner-primary::after {
+  color: var(--primary);
+  font-size: 3rem;
+}
+.lb-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--base-content);
+}
+
+/* Blobs Background */
+.lb-blob-top {
+  background-color: var(--primary);
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  height: 16rem;
+  border-radius: 0;
+}
+.lb-blob-bottom-left {
+  background-color: var(--secondary);
+  bottom: 0;
+  left: 0;
+  transform: translate(-30%, 25%);
+  width: 18rem;
+  height: 18rem;
+}
+.lb-blob-bottom-right {
+  background-color: var(--accent);
+  bottom: 0;
+  right: 0;
+  transform: translate(30%, 25%);
+  width: 18rem;
+  height: 18rem;
+}
+
+/* Header Component */
+.lb-header {
+  z-index: 10;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+.lb-emoji-large {
+  font-size: 3rem;
+}
+.lb-main-title {
+  font-size: 3rem;
+  margin-top: 0.25rem;
+}
+.lb-subtitle {
+  color: var(--base-content);
+  opacity: 0.5;
+  font-size: 0.875rem;
+}
+
+/* --- PODIUM SYSTEM --- */
+.podium-wrapper {
+  z-index: 10;
+  width: 100%;
+  max-width: 42rem;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 0.75rem;
+}
+@media (min-width: 640px) {
+  .podium-wrapper {
+    gap: 1.25rem;
+  }
+}
+
+.podium-empty {
+  flex: 1;
+}
+.podium-slot {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+.order-1 {
+  order: 1;
+}
+.order-2 {
+  order: 2;
+}
+.order-3 {
+  order: 3;
+}
+
+.podium-badge {
+  font-size: 1.875rem;
+}
+.podium-name {
+  font-weight: 700;
+  color: var(--base-content);
+  font-size: 0.875rem;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  padding: 0 0.5rem;
+}
+@media (min-width: 640px) {
+  .podium-name {
+    font-size: 1rem;
+  }
+}
+.podium-stats {
+  font-size: 0.75rem;
+  color: var(--base-content);
+  opacity: 0.5;
+  font-family: monospace;
+}
+
+.podium-bar {
+  width: 100%;
+  border-radius: 1rem 1rem 0 0;
+  border: 2px solid;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 0.5rem;
+  box-shadow: 0 10px 15px -3px var(--shadow-color);
+}
+.podium-rank-text {
+  font-size: 1.5rem;
+  font-weight: 900;
+}
+
+/* Podium Colors and Heights */
+.podium-1 {
+  height: 10rem;
+  background-color: #eab308; /* Warning/Gold */
+  color: #fff;
+  border-color: rgba(234, 179, 8, 0.6);
+  box-shadow: 0 0 20px rgba(234, 179, 8, 0.4);
+}
+.podium-2 {
+  height: 7rem;
+  background-color: var(--base-300);
+  color: var(--base-content);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+.podium-3 {
+  height: 5rem;
+  background-color: rgba(124, 45, 18, 0.4); /* Bronze */
+  color: #fdba74;
+  border-color: rgba(249, 115, 22, 0.2);
+}
+
+/* --- LEADERBOARD GRID & CARDS --- */
+.lb-grid {
+  z-index: 10;
+  width: 100%;
+  max-width: 48rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+}
+@media (min-width: 640px) {
+  .lb-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.lb-card {
+  background-color: var(--base-200);
+  border: 1px solid var(--base-300);
+  border-radius: 1rem;
+  transition: box-shadow 0.2s;
+  box-shadow: 0 4px 6px -1px var(--shadow-color);
+}
+.lb-card:hover {
+  box-shadow: 0 10px 15px -3px var(--shadow-color);
+}
+
+/* Card Modifiers for Ranks */
+.card-gold {
+  border-color: rgba(234, 179, 8, 0.5);
+  background-color: rgba(234, 179, 8, 0.1);
+}
+.card-silver {
+  border-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.05);
+}
+.card-bronze {
+  border-color: rgba(249, 115, 22, 0.3);
+  background-color: rgba(124, 45, 18, 0.1);
+}
+.card-default {
+  border-color: var(--base-300);
+}
+
+.lb-card-body {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.lb-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.lb-rank-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.lb-emoji-small {
+  font-size: 1.25rem;
+}
+.badge-outline-small {
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  font-family: monospace;
+  font-size: 0.75rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 0.5rem;
+}
+
+.lb-score-info {
+  text-align: right;
+}
+.lb-score-text {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--primary);
+}
+.lb-total-text {
+  color: var(--base-content);
+  opacity: 0.4;
+  font-size: 0.75rem;
+  margin-left: 0.25rem;
+}
+
+.lb-nickname {
+  font-weight: 700;
+  color: var(--base-content);
+  font-size: 1.125rem;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Stats Row */
+.lb-stats-row {
+  display: flex;
+  gap: 0.75rem;
+}
+.stat-badge {
+  background-color: var(--base-300);
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+.text-success {
+  color: #22c55e;
+}
+.text-muted {
+  color: var(--base-content);
+  opacity: 0.5;
+}
+
+/* Answers List inside Card */
+.lb-answers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-top: 0.25rem;
+}
+.lb-answer-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 0.5rem;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.75rem;
+}
+.lb-answer-text {
+  color: var(--base-content);
+  opacity: 0.7;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  margin-right: 0.5rem;
+}
+.badge-indicator {
+  font-weight: 700;
+  font-size: 0.65rem;
+  padding: 0.1rem 0.3rem;
+  border-radius: 0.25rem;
+}
+.indicator-success {
+  background-color: #22c55e;
+  color: #fff;
+}
+.indicator-error {
+  background-color: #ef4444;
+  color: #fff;
+}
+
+.lb-btn-play-again {
+  z-index: 10;
+  margin-top: 0.5rem;
+  padding-left: 2.5rem;
+  padding-right: 2.5rem;
+}
