@@ -20,20 +20,12 @@ export default function PlayerGame() {
       setSubmitted(false);
       setGrading(false);
     };
-
-    const handleGradingStart = () => {
-      setGrading(true);
-    };
-
-    const handleShowLeaderboard = () => {
-      navigate("/leaderboard");
-    };
+    const handleGradingStart = () => setGrading(true);
+    const handleShowLeaderboard = () => navigate("/leaderboard");
 
     socket.on("new_question", handleNewQuestion);
     socket.on("grading_start", handleGradingStart);
     socket.on("show_leaderboard", handleShowLeaderboard);
-
-    // Minta soal aktif ke server setelah listener terpasang
     socket.emit("get_current_question");
 
     return () => {
@@ -47,7 +39,6 @@ export default function PlayerGame() {
     e.preventDefault();
     const clean = answer.trim().split(/\s+/)[0];
     if (!clean || !question) return;
-
     socket.emit("submit_answer", {
       questionIndex: question.index,
       answer: clean.toLowerCase(),
@@ -57,70 +48,114 @@ export default function PlayerGame() {
 
   if (grading) {
     return (
-      <div style={{ textAlign: "center", padding: "2rem" }}>
-        <h2>Menghitung hasil...</h2>
+      <div className="min-h-screen bg-base-100 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-5 text-center px-6">
+          <span
+            className="loading loading-dots loading-lg text-warning"
+            style={{ width: 60 }}
+          />
+          <h2 className="text-2xl font-bold text-base-content">
+            Menghitung hasil...
+          </h2>
+          <p className="text-base-content/50 text-sm">
+            AI sedang mengoreksi jawaban semua peserta
+          </p>
+        </div>
       </div>
     );
   }
 
   if (!question) {
     return (
-      <div style={{ textAlign: "center", padding: "2rem" }}>
-        <h2>Menunggu soal...</h2>
+      <div className="min-h-screen bg-base-100 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-5 text-center px-6">
+          <span
+            className="loading loading-ring text-primary"
+            style={{ width: 60 }}
+          />
+          <h2 className="text-2xl font-bold text-base-content">
+            Menunggu soal...
+          </h2>
+          <p className="text-base-content/50 text-sm">
+            Host sedang mempersiapkan game
+          </p>
+        </div>
       </div>
     );
   }
 
+  const progress = Math.round(((question.index + 1) / question.total) * 100);
+
   return (
-    <div
-      style={{
-        maxWidth: "500px",
-        margin: "2rem auto",
-        padding: "1rem",
-        textAlign: "center",
-      }}
-    >
-      <div style={{ color: "#666", marginBottom: "1rem" }}>
-        Soal {question.index + 1} dari {question.total}
+    <div className="min-h-screen bg-base-100 flex items-center justify-center p-4 relative overflow-hidden">
+      <div className="absolute top-0 left-0 w-80 h-80 bg-primary opacity-10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
+      <div className="absolute bottom-0 right-0 w-72 h-72 bg-secondary opacity-10 rounded-full blur-3xl translate-x-1/3 translate-y-1/3 pointer-events-none" />
+
+      <div className="z-10 w-full max-w-sm flex flex-col gap-5">
+        {/* Progress & counter */}
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center justify-between">
+            <span className="text-base-content/50 text-xs uppercase tracking-widest font-semibold">
+              Soal
+            </span>
+            <span className="badge badge-outline badge-primary font-mono">
+              {question.index + 1} / {question.total}
+            </span>
+          </div>
+          <progress
+            className="progress progress-primary w-full h-2"
+            value={progress}
+            max="100"
+          />
+        </div>
+
+        {/* Question card */}
+        <div className="card bg-base-200 border border-primary/30 shadow-2xl card-glow min-h-40">
+          <div className="card-body items-center justify-center text-center py-8">
+            <p className="text-2xl sm:text-3xl font-bold text-base-content leading-snug">
+              {question.text}
+            </p>
+          </div>
+        </div>
+
+        {/* Answer form */}
+        <div className="card bg-base-200 border border-base-300 shadow-xl">
+          <div className="card-body gap-4">
+            <p className="text-base-content/50 text-xs text-center uppercase tracking-wider">
+              Ketik 1 kata jawaban
+            </p>
+            <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+              <input
+                type="text"
+                value={answer}
+                onChange={(e) => setAnswer(e.target.value)}
+                disabled={submitted}
+                required
+                placeholder="Jawaban kamu..."
+                className="input input-bordered input-primary w-full bg-base-300 text-center text-xl font-bold tracking-wide"
+                autoFocus
+              />
+              <button
+                type="submit"
+                disabled={submitted || !answer.trim()}
+                className={`btn btn-lg w-full gap-2 font-bold transition-all duration-200 ${
+                  submitted
+                    ? "btn-success cursor-not-allowed"
+                    : "btn-primary hover:-translate-y-1 shadow-lg shadow-primary/30"
+                }`}
+              >
+                {submitted ? <>✓ Jawaban Terkirim!</> : <>🚀 Kirim Jawaban</>}
+              </button>
+            </form>
+          </div>
+        </div>
+
+        {submitted && (
+          <div className="text-center text-base-content/40 text-sm animate-pulse">
+            Menunggu soal berikutnya...
+          </div>
+        )}
       </div>
-
-      <h2 style={{ fontSize: "1.5rem", marginBottom: "2rem" }}>
-        {question.text}
-      </h2>
-
-      <form
-        onSubmit={handleSubmit}
-        style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
-      >
-        <input
-          type="text"
-          value={answer}
-          onChange={(e) => setAnswer(e.target.value.trim())}
-          disabled={submitted}
-          required
-          placeholder="Ketik 1 kata jawaban"
-          style={{
-            padding: "0.75rem",
-            fontSize: "1.2rem",
-            textAlign: "center",
-          }}
-        />
-        <button
-          type="submit"
-          disabled={submitted || !answer.trim()}
-          style={{
-            padding: "0.75rem",
-            fontSize: "1.1rem",
-            cursor: submitted || !answer.trim() ? "not-allowed" : "pointer",
-            backgroundColor: submitted ? "#10b981" : "#3b82f6",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-          }}
-        >
-          {submitted ? "Jawaban terkirim ✓" : "Kirim Jawaban"}
-        </button>
-      </form>
     </div>
   );
 }

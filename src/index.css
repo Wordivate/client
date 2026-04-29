@@ -1,308 +1,34 @@
-:root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-  --sans: system-ui, "Segoe UI", Roboto, sans-serif;
-  --heading: system-ui, "Segoe UI", Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
+@layer base {
+  html,
+  body,
+  #root {
+    min-height: 100vh;
+  }
 
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
+  body {
+    font-family: ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+@layer utilities {
+  .text-glow {
+    text-shadow:
+      0 0 20px rgba(124, 58, 237, 0.8),
+      0 0 60px rgba(124, 58, 237, 0.4);
   }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
+  .text-glow-secondary {
+    text-shadow:
+      0 0 20px rgba(245, 158, 11, 0.8),
+      0 0 60px rgba(245, 158, 11, 0.3);
   }
-}
-
-body {
-  margin: 0;
-}
-
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
-}
-
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-}
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
-p {
-  margin: 0;
-}
-
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
-}
-
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
-}
-
-.leaderboard-page {
-  --paper: #f6f2ea;
-  --ink: #1a1a1a;
-  --accent: #ff6b3d;
-  --accent-2: #2a9d8f;
-  --accent-3: #f4c95d;
-  --shadow: rgba(0, 0, 0, 0.08);
-
-  min-height: 100vh;
-  color: var(--ink);
-  background:
-    radial-gradient(1200px 800px at 10% -10%, #ffe8d6, transparent),
-    radial-gradient(900px 700px at 110% 0%, #cce3de, transparent), var(--paper);
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  padding: 36px 18px 56px;
-  font-family: "Space Grotesk", "Trebuchet MS", "Segoe UI", sans-serif;
-}
-
-.leaderboard-header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 10px;
-}
-
-.leaderboard-title {
-  font-size: clamp(28px, 4vw, 44px);
-  letter-spacing: 0.5px;
-  margin: 0;
-}
-
-.leaderboard-subtitle {
-  margin: 0;
-  font-size: 14px;
-  opacity: 0.7;
-}
-
-.leaderboard-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 16px;
-  width: min(1100px, 100%);
-  align-self: center;
-}
-
-.leaderboard-actions {
-  display: flex;
-  justify-content: center;
-}
-
-.leaderboard-button {
-  border: none;
-  background: linear-gradient(135deg, var(--accent), #ff9b3d);
-  color: #fff;
-  padding: 12px 22px;
-  border-radius: 999px;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 8px 16px var(--shadow);
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
-}
-
-.leaderboard-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 20px var(--shadow);
-}
-
-.leaderboard-card {
-  background: #fff;
-  border-radius: 18px;
-  padding: 18px;
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.06);
-  border: 2px solid rgba(0, 0, 0, 0.05);
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  position: relative;
-  overflow: hidden;
-}
-
-.leaderboard-card::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(
-    260px 200px at 100% 0%,
-    rgba(255, 155, 61, 0.12),
-    transparent
-  );
-  pointer-events: none;
-}
-
-.card-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.rank-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 12px;
-  border-radius: 999px;
-  font-weight: 700;
-  background: rgba(0, 0, 0, 0.05);
-}
-
-.rank-badge.special {
-  color: #1a1a1a;
-}
-
-.rank-badge.rank-1 {
-  background: #f4c95d;
-}
-
-.rank-badge.rank-2 {
-  background: #c0c7d1;
-}
-
-.rank-badge.rank-3 {
-  background: #d08c60;
-}
-
-.player-name {
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0;
-}
-
-.score-line {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-  font-weight: 700;
-}
-
-.score-value {
-  font-size: 26px;
-}
-
-.score-meta {
-  font-size: 12px;
-  opacity: 0.7;
-}
-
-.answer-list {
-  display: grid;
-  gap: 6px;
-}
-
-.answer-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 6px 10px;
-  border-radius: 12px;
-  background: #f8fafc;
-  font-size: 13px;
-}
-
-.answer-text {
-  font-weight: 600;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.answer-status {
-  font-weight: 700;
-  padding: 2px 8px;
-  border-radius: 999px;
-  background: rgba(0, 0, 0, 0.06);
-}
-
-.answer-status.correct {
-  background: rgba(42, 157, 143, 0.2);
-  color: #135e54;
-}
-
-.answer-status.wrong {
-  background: rgba(239, 68, 68, 0.18);
-  color: #7a1f1f;
-}
-
-@media (max-width: 600px) {
-  .leaderboard-page {
-    padding: 28px 14px 40px;
+  .card-glow {
+    box-shadow:
+      0 0 0 1px rgba(124, 58, 237, 0.2),
+      0 8px 32px rgba(124, 58, 237, 0.15);
   }
 }

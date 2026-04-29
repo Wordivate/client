@@ -24,24 +24,14 @@ export default function HostGame() {
       setAnswers([]);
       setIsLastQuestion(index === total - 1);
     };
-
-    const handleWordcloudUpdate = ({ answers }) => {
-      setAnswers(answers);
-    };
-
-    const handleGradingStart = () => {
-      setLoading(true);
-    };
-
-    const handleShowLeaderboard = () => {
-      navigate("/leaderboard");
-    };
+    const handleWordcloudUpdate = ({ answers }) => setAnswers(answers);
+    const handleGradingStart = () => setLoading(true);
+    const handleShowLeaderboard = () => navigate("/leaderboard");
 
     socket.on("new_question", handleNewQuestion);
     socket.on("wordcloud_update", handleWordcloudUpdate);
     socket.on("grading_start", handleGradingStart);
     socket.on("show_leaderboard", handleShowLeaderboard);
-
     socket.emit("get_current_question");
 
     return () => {
@@ -52,95 +42,109 @@ export default function HostGame() {
     };
   }, [socket, navigate]);
 
-  const handleNextQuestion = () => {
-    if (!socket) return;
-    socket.emit("next_question");
-  };
-
-  const handleEndGame = () => {
-    if (!socket) return;
-    socket.emit("end_game");
-  };
+  const progress = totalQuestions
+    ? Math.round(((currentQuestionIndex + 1) / totalQuestions) * 100)
+    : 0;
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-blue-500 to-purple-600 p-4">
-      <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-4xl">
-        <h1 className="text-4xl font-bold text-center mb-8 text-gray-800">
-          Host Game
-        </h1>
+    <div className="min-h-screen bg-base-100 flex flex-col items-center justify-center p-4 sm:p-6 relative overflow-hidden">
+      {/* Background blobs */}
+      <div className="absolute top-0 left-0 w-96 h-96 bg-primary opacity-10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-accent opacity-10 rounded-full blur-3xl translate-x-1/2 translate-y-1/2 pointer-events-none" />
 
-        {/* Question Section */}
-        {question && (
-          <div className="mb-8">
-            {/* Question Counter */}
-            <div className="flex items-center justify-between mb-4">
-              <p className="text-lg font-bold text-blue-600">
-                Soal {currentQuestionIndex + 1} dari {totalQuestions}
-              </p>
-              <div className="w-48 bg-gray-200 rounded-full h-2">
-                <div
-                  className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                  style={{
-                    width: `${((currentQuestionIndex + 1) / totalQuestions) * 100}%`,
-                  }}
-                ></div>
-              </div>
+      <div className="z-10 w-full max-w-4xl flex flex-col gap-5">
+        {/* Header bar */}
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-bold text-primary text-glow">
+            🎮 Host Game
+          </h1>
+          {totalQuestions > 0 && (
+            <div className="badge badge-outline badge-primary text-sm font-mono px-3 py-3">
+              {currentQuestionIndex + 1} / {totalQuestions}
             </div>
+          )}
+        </div>
 
-            {/* Question Text */}
-            <div className="bg-gradient-to-r from-blue-50 to-purple-50 border-l-4 border-blue-500 p-6 rounded-lg mb-8">
-              <p className="text-3xl font-bold text-gray-800 text-center">
+        {/* Progress bar */}
+        {totalQuestions > 0 && (
+          <div className="w-full">
+            <progress
+              className="progress progress-primary w-full h-3"
+              value={progress}
+              max="100"
+            />
+          </div>
+        )}
+
+        {/* Question card */}
+        {question ? (
+          <div className="card bg-base-200 border border-primary/30 shadow-2xl card-glow">
+            <div className="card-body items-center text-center py-10">
+              <p className="text-base-content/50 text-xs uppercase tracking-widest mb-3 font-semibold">
+                Soal {currentQuestionIndex + 1}
+              </p>
+              <p className="text-3xl sm:text-4xl font-bold text-base-content leading-snug max-w-2xl">
                 {question}
               </p>
             </div>
           </div>
-        )}
-
-        {/* WordCloud Section */}
-        <div className="mb-8 bg-gray-50 p-6 rounded-lg">
-          <h2 className="text-lg font-semibold text-gray-700 mb-4">
-            Jawaban Peserta
-          </h2>
-          <WordCloud answers={answers} />
-        </div>
-
-        {/* Grading Loading State */}
-        {loading && (
-          <div className="bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-3 rounded-lg mb-6 text-center">
-            <p className="font-semibold flex items-center justify-center gap-2">
-              <span className="inline-block animate-spin">⏳</span>
-              Sedang mengoreksi jawaban...
-            </p>
+        ) : (
+          <div className="card bg-base-200 border border-base-300 shadow-xl">
+            <div className="card-body items-center py-10">
+              <span className="loading loading-dots loading-lg text-primary" />
+              <p className="text-base-content/50 text-sm mt-2">
+                Menunggu soal...
+              </p>
+            </div>
           </div>
         )}
 
-        {/* Action Buttons */}
-        <div className="flex gap-4 justify-center">
+        {/* Word cloud */}
+        <div className="card bg-base-200 border border-base-300 shadow-xl">
+          <div className="card-body">
+            <h2 className="card-title text-base-content/70 text-sm uppercase tracking-widest font-semibold">
+              ☁️ Jawaban Peserta
+            </h2>
+            <div className="flex items-center justify-center rounded-xl bg-base-300/50 overflow-hidden min-h-48">
+              {answers.length > 0 ? (
+                <WordCloud answers={answers} width={560} height={260} />
+              ) : (
+                <p className="text-base-content/30 text-sm py-10">
+                  Belum ada jawaban masuk...
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Grading state */}
+        {loading && (
+          <div className="alert bg-warning/20 border border-warning/40 text-warning">
+            <span className="loading loading-spinner loading-sm" />
+            <span className="font-semibold">
+              Sedang mengoreksi jawaban dengan AI...
+            </span>
+          </div>
+        )}
+
+        {/* Action buttons */}
+        <div className="flex gap-3 justify-center">
           {!isLastQuestion && (
             <button
-              onClick={handleNextQuestion}
+              onClick={() => socket?.emit("next_question")}
               disabled={loading}
-              className={`font-bold px-6 py-3 rounded-lg transition text-lg ${
-                loading
-                  ? "bg-gray-400 text-gray-200 cursor-not-allowed"
-                  : "bg-blue-500 hover:bg-blue-600 text-white"
-              }`}
+              className="btn btn-primary btn-lg gap-2 px-8 shadow-lg shadow-primary/30 hover:-translate-y-1 transition-all duration-200"
             >
-              Soal Berikutnya
+              Soal Berikutnya →
             </button>
           )}
-
           {isLastQuestion && (
             <button
-              onClick={handleEndGame}
+              onClick={() => socket?.emit("end_game")}
               disabled={loading}
-              className={`font-bold px-6 py-3 rounded-lg transition text-lg ${
-                loading
-                  ? "bg-gray-400 text-gray-200 cursor-not-allowed"
-                  : "bg-green-500 hover:bg-green-600 text-white"
-              }`}
+              className="btn btn-success btn-lg gap-2 px-8 shadow-lg shadow-success/30 hover:-translate-y-1 transition-all duration-200"
             >
-              ✓ Selesai & Lihat Hasil
+              🏆 Selesai & Lihat Hasil
             </button>
           )}
         </div>
