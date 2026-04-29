@@ -801,11 +801,17 @@ h3,
   margin-top: 0.5rem;
 }
 
+.loading-dots {
+  display: inline-block;
+  font-size: 2rem;
+  font-family: "AGFatumCBold", sans-serif;
+  line-height: 1;
+  transform: translateX(-0.5em);
+}
+
 .loading-dots::after {
   content: ".";
-  font-size: 2rem;
   color: var(--primary);
-  font-family: "AGFatumCBold", sans-serif;
   animation: dots 1.5s steps(4, end) infinite;
 }
 @keyframes dots {
@@ -1111,9 +1117,12 @@ h3,
   align-items: center;
   gap: 1.25rem;
 }
+.lb-spinner-primary {
+  font-size: 3rem;
+}
+
 .lb-spinner-primary::after {
   color: var(--primary);
-  font-size: 3rem;
 }
 .lb-title {
   font-size: 1.5rem;
