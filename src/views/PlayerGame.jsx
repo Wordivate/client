@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useSocket } from "../context/SocketContext";
-import "./PlayerGame.css";
+import "../index.css";
 
 export default function PlayerGame() {
   const socket = useSocket();

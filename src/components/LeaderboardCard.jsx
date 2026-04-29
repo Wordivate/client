@@ -1,4 +1,4 @@
-import "./Leaderboard.css";
+import "../index.css";
 
 const rankConfig = {
   1: { emoji: "🥇", label: "Gold", cls: "card-gold" },

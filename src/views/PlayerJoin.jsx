@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useSocket } from "../context/SocketContext";
-import "./PlayerJoin.css";
+import "../index.css";
 
 export default function PlayerJoin() {
   const socket = useSocket();
@@ -38,6 +38,7 @@ export default function PlayerJoin() {
     e.preventDefault();
     if (!roomCode || !nickname) return;
     setErrorMsg("");
+    sessionStorage.setItem("nickname", nickname);
     socket.emit("join_room", { roomCode: roomCode.toUpperCase(), nickname });
     setJoined(true);
   };
@@ -133,7 +134,7 @@ export default function PlayerJoin() {
                 disabled={!roomCode || !nickname}
                 className="btn-join"
               >
-                🚀 Masuk!
+                Masuk!
               </button>
             </form>
           </div>

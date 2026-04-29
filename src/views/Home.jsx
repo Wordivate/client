@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router";
-import "./Home.css";
+import "../index.css";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -18,7 +18,7 @@ export default function Home() {
             <span className="title-base">ivate</span>
           </h1>
           <p className="subtitle">
-            Quiz kata real-time yang seru buat dimainkan bareng!
+            If Mentimeter and Kahoot had a child
           </p>
         </div>
 

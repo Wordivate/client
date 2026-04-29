@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useSocket } from "../context/SocketContext";
 import WordCloud from "../components/WordCloud";
-import "./HostGame.css";
+import "../index.css";
 
 export default function HostGame() {
   const socket = useSocket();

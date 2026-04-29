@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useSocket } from "../context/SocketContext";
-import "./HostLobby.css";
+import "../index.css";
 
 export default function HostLobby() {
   const socket = useSocket();
@@ -86,7 +86,7 @@ export default function HostLobby() {
               disabled={!!roomCode}
               className="btn btn-primary btn-full"
             >
-              🏠 {roomCode ? "Ruangan Dibuat" : "Buat Room Baru"}
+              {roomCode ? "Ruangan Dibuat" : "Buat Room Baru"}
             </button>
 
             {roomCode && (
@@ -124,7 +124,7 @@ export default function HostLobby() {
                   <span className="spinner"></span> Generating soal...
                 </>
               ) : (
-                "✨ Generate Soal"
+                "Generate Soal"
               )}
             </button>
 
@@ -149,7 +149,7 @@ export default function HostLobby() {
         {/* Step 3 — Start Game */}
         {questionsReady && (
           <button onClick={handleStartGame} className="btn btn-start btn-full">
-            🎮 Mulai Game!
+            Mulai Game!
           </button>
         )}
 
