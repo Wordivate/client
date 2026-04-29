@@ -101,9 +101,9 @@ export default function WordCloud({ answers = [], height = 300 }) {
         svg.on("mousemove", (event) => {
           const [mx, my] = d3.pointer(event, g.node());
           const repelRadius = 120;
-          const repelStrength = 15; // Sedikit dilembutkan agar tidak terlalu liar
+          const repelStrength = 15; 
 
-          let isMoved = false; // Optimasi: Cek apakah ada yang tersentuh
+          let isMoved = false;
 
           // 1. Beri dorongan jika kena mouse
           laidOut.forEach((d) => {
@@ -119,7 +119,6 @@ export default function WordCloud({ answers = [], height = 300 }) {
             }
           });
 
-          // HENTIKAN proses jika kursor bergerak di area kosong (inilah yang bikin performa jadi mulus)
           if (!isMoved) return;
 
           // 2. Collision Detection
@@ -161,10 +160,9 @@ export default function WordCloud({ answers = [], height = 300 }) {
           // 4. Animasi pergeseran
           g.selectAll("text")
             .data(laidOut, (d) => d.text)
-            // .interrupt() <-- DIHAPUS agar tidak patah-patah
             .transition()
-            .duration(400) // Waktu meluncur
-            .ease(d3.easeCubicOut) // Efek melambat di ujung pergerakan
+            .duration(400) 
+            .ease(d3.easeCubicOut)
             .attr("transform", (d) => `translate(${d.x},${d.y})`);
         });
       })
